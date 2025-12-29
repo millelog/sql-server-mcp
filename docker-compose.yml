@@ -1,0 +1,89 @@
+# SQL Server MCP - Docker Compose Configuration
+#
+# Usage:
+#   Development with test SQL Server:
+#     docker-compose up
+#
+#   Production (MCP only, external SQL Server):
+#     docker-compose up mcp
+#
+#   Just the test SQL Server:
+#     docker-compose up sqlserver
+
+services:
+  # The MCP Server
+  mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sql-server-mcp
+    environment:
+      - MSSQL_HOST=${MSSQL_HOST:-sqlserver}
+      - MSSQL_PORT=${MSSQL_PORT:-1433}
+      - MSSQL_USER=${MSSQL_USER:-sa}
+      - MSSQL_PASSWORD=${MSSQL_PASSWORD:-YourStrong@Passw0rd}
+      - MSSQL_DATABASE=${MSSQL_DATABASE:-master}
+      - MAX_ROWS=${MAX_ROWS:-100}
+      - QUERY_TIMEOUT=${QUERY_TIMEOUT:-30}
+      - ALLOWED_DATABASES=${ALLOWED_DATABASES:-}
+      - BLOCKED_DATABASES=${BLOCKED_DATABASES:-}
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    # MCP uses stdio for communication
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network
+
+  # SQL Server for development/testing
+  sqlserver:
+    image: mcr.microsoft.com/mssql/mssql-server:2022-latest
+    container_name: sql-server-mcp-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_PASSWORD:-YourStrong@Passw0rd}
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./scripts/init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -Q "SELECT 1" -C || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+
+  # Test runner service
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sql-server-mcp-test
+    environment:
+      - MSSQL_HOST=sqlserver
+      - MSSQL_PORT=1433
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=${MSSQL_PASSWORD:-YourStrong@Passw0rd}
+      - MSSQL_DATABASE=master
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    command: ["pytest", "tests/", "-v", "--tb=short"]
+    volumes:
+      - ./tests:/app/tests:ro
+    networks:
+      - mcp-network
+    profiles:
+      - test
+
+volumes:
+  sqlserver-data:
+
+networks:
+  mcp-network:
+    driver: bridge

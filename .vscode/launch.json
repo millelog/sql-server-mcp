@@ -1,0 +1,140 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run MCP Server",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "sql_server_mcp",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "MSSQL_HOST": "${env:MSSQL_HOST}",
+                "MSSQL_PORT": "${env:MSSQL_PORT}",
+                "MSSQL_USER": "${env:MSSQL_USER}",
+                "MSSQL_PASSWORD": "${env:MSSQL_PASSWORD}",
+                "MSSQL_DATABASE": "${env:MSSQL_DATABASE}",
+                "MAX_ROWS": "100",
+                "QUERY_TIMEOUT": "30"
+            },
+            "justMyCode": true
+        },
+        {
+            "name": "Run MCP Server (Local SQL)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "sql_server_mcp",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "MSSQL_HOST": "localhost",
+                "MSSQL_PORT": "1433",
+                "MSSQL_USER": "sa",
+                "MSSQL_PASSWORD": "YourStrong@Passw0rd",
+                "MSSQL_DATABASE": "master",
+                "MAX_ROWS": "100",
+                "QUERY_TIMEOUT": "30"
+            },
+            "justMyCode": true
+        },
+        {
+            "name": "Debug MCP Server",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "sql_server_mcp",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "MSSQL_HOST": "localhost",
+                "MSSQL_PORT": "1433",
+                "MSSQL_USER": "sa",
+                "MSSQL_PASSWORD": "YourStrong@Passw0rd",
+                "MSSQL_DATABASE": "master",
+                "MAX_ROWS": "100",
+                "QUERY_TIMEOUT": "30",
+                "DEBUG": "1"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "Run Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/",
+                "-v",
+                "--tb=short"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "justMyCode": true
+        },
+        {
+            "name": "Run Unit Tests Only",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/test_validation.py",
+                "-v",
+                "--tb=short"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "justMyCode": true
+        },
+        {
+            "name": "Run Current Test File",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}",
+                "-v",
+                "--tb=short"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "justMyCode": true
+        },
+        {
+            "name": "Debug Current Test File",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}",
+                "-v",
+                "--tb=long",
+                "-s"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "justMyCode": false
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Start SQL Server + Run Tests",
+            "configurations": [],
+            "preLaunchTask": "docker-compose-up-sqlserver",
+            "stopAll": true
+        }
+    ]
+}

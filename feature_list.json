@@ -1,0 +1,646 @@
+{
+  "project": "sql-server-mcp",
+  "description": "A Python-based MCP server for read-only SQL Server database introspection",
+  "features": [
+    {
+      "id": "F001",
+      "category": "core-infrastructure",
+      "description": "MCP server initializes and responds to handshake",
+      "priority": 1,
+      "steps": [
+        "Run the MCP server",
+        "Send initialize request",
+        "Verify server responds with capabilities",
+        "Verify server name and version are correct"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F002",
+      "category": "core-infrastructure",
+      "description": "MCP server lists available tools",
+      "priority": 1,
+      "steps": [
+        "Send tools/list request",
+        "Verify all expected tools are returned",
+        "Verify tool schemas are valid JSON Schema"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F003",
+      "category": "core-infrastructure",
+      "description": "Database connection can be established with valid credentials",
+      "priority": 1,
+      "steps": [
+        "Configure connection string via environment variables",
+        "Attempt to connect to SQL Server",
+        "Verify connection is successful",
+        "Verify connection is properly closed after use"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F004",
+      "category": "core-infrastructure",
+      "description": "Connection errors are handled gracefully",
+      "priority": 1,
+      "steps": [
+        "Attempt connection with invalid credentials",
+        "Verify meaningful error message is returned",
+        "Verify server does not crash"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F005",
+      "category": "database-listing",
+      "description": "List all accessible databases on the server",
+      "priority": 2,
+      "steps": [
+        "Call list_databases tool",
+        "Verify returns array of database names",
+        "Verify system databases can be optionally excluded",
+        "Verify response includes database metadata (size, state)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F006",
+      "category": "database-listing",
+      "description": "Filter databases by name pattern",
+      "priority": 3,
+      "steps": [
+        "Call list_databases with name filter",
+        "Verify only matching databases are returned",
+        "Verify wildcard patterns work"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F007",
+      "category": "table-operations",
+      "description": "List all tables in a specific database",
+      "priority": 2,
+      "steps": [
+        "Call list_tables tool with database name",
+        "Verify returns array of table names",
+        "Verify includes schema names (e.g., dbo.TableName)",
+        "Verify response includes row count estimates"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F008",
+      "category": "table-operations",
+      "description": "List tables across all databases",
+      "priority": 3,
+      "steps": [
+        "Call list_tables without database specified",
+        "Verify returns tables from all accessible databases",
+        "Verify each result includes database name"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F009",
+      "category": "table-operations",
+      "description": "Search for tables by name pattern",
+      "priority": 2,
+      "steps": [
+        "Call list_tables with name filter",
+        "Verify wildcard search works",
+        "Verify case-insensitive search works",
+        "Verify can search across all databases"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F010",
+      "category": "table-operations",
+      "description": "Get full table definition/DDL",
+      "priority": 1,
+      "steps": [
+        "Call get_table_definition with database and table name",
+        "Verify returns CREATE TABLE statement",
+        "Verify includes column definitions with data types",
+        "Verify includes constraints (PRIMARY KEY, FOREIGN KEY, UNIQUE)",
+        "Verify includes default values",
+        "Verify includes NULL/NOT NULL specifications"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F011",
+      "category": "table-operations",
+      "description": "Get table columns with detailed metadata",
+      "priority": 2,
+      "steps": [
+        "Call get_table_columns tool",
+        "Verify returns column name, data type, length/precision",
+        "Verify returns nullable status",
+        "Verify returns default values",
+        "Verify returns identity column info",
+        "Verify returns computed column formulas"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F012",
+      "category": "table-operations",
+      "description": "Get table indexes",
+      "priority": 2,
+      "steps": [
+        "Call get_table_indexes tool",
+        "Verify returns index names and types",
+        "Verify returns indexed columns in order",
+        "Verify returns included columns",
+        "Verify returns clustered/non-clustered status",
+        "Verify returns unique status"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F013",
+      "category": "table-operations",
+      "description": "Get table foreign key relationships",
+      "priority": 2,
+      "steps": [
+        "Call get_table_relationships tool",
+        "Verify returns foreign key names",
+        "Verify returns referenced table and columns",
+        "Verify returns ON DELETE/UPDATE actions",
+        "Verify returns both incoming and outgoing relationships"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F014",
+      "category": "view-operations",
+      "description": "List all views in a specific database",
+      "priority": 2,
+      "steps": [
+        "Call list_views tool with database name",
+        "Verify returns array of view names with schemas",
+        "Verify can filter by name pattern"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F015",
+      "category": "view-operations",
+      "description": "Get view definition",
+      "priority": 2,
+      "steps": [
+        "Call get_view_definition tool",
+        "Verify returns CREATE VIEW statement",
+        "Verify returns underlying SELECT query",
+        "Verify handles views with encrypted definitions gracefully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F016",
+      "category": "view-operations",
+      "description": "Get view columns with metadata",
+      "priority": 3,
+      "steps": [
+        "Call get_view_columns tool",
+        "Verify returns column names and data types",
+        "Verify returns source table/column information where available"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F017",
+      "category": "stored-procedure-operations",
+      "description": "List all stored procedures in a database",
+      "priority": 2,
+      "steps": [
+        "Call list_procedures tool with database name",
+        "Verify returns procedure names with schemas",
+        "Verify can filter by name pattern",
+        "Verify excludes system procedures by default"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F018",
+      "category": "stored-procedure-operations",
+      "description": "Get stored procedure definition",
+      "priority": 1,
+      "steps": [
+        "Call get_procedure_definition tool",
+        "Verify returns full CREATE PROCEDURE statement",
+        "Verify returns parameter definitions",
+        "Verify handles encrypted procedures gracefully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F019",
+      "category": "stored-procedure-operations",
+      "description": "Get stored procedure parameters",
+      "priority": 2,
+      "steps": [
+        "Call get_procedure_parameters tool",
+        "Verify returns parameter names and data types",
+        "Verify returns direction (IN/OUT/INOUT)",
+        "Verify returns default values"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F020",
+      "category": "function-operations",
+      "description": "List all user-defined functions in a database",
+      "priority": 3,
+      "steps": [
+        "Call list_functions tool",
+        "Verify returns scalar functions",
+        "Verify returns table-valued functions",
+        "Verify includes function type in response"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F021",
+      "category": "function-operations",
+      "description": "Get function definition",
+      "priority": 3,
+      "steps": [
+        "Call get_function_definition tool",
+        "Verify returns full CREATE FUNCTION statement",
+        "Verify returns return type information"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F022",
+      "category": "query-operations",
+      "description": "Execute read-only SELECT query",
+      "priority": 1,
+      "steps": [
+        "Call execute_query tool with SELECT statement",
+        "Verify returns query results as array of objects",
+        "Verify column names are preserved",
+        "Verify data types are correctly serialized to JSON"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F023",
+      "category": "query-operations",
+      "description": "Enforce query result row limits",
+      "priority": 1,
+      "steps": [
+        "Execute query that returns many rows",
+        "Verify results are limited to configured maximum",
+        "Verify user is informed of truncation",
+        "Verify limit can be customized per-query up to maximum"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F024",
+      "category": "query-operations",
+      "description": "Block mutation queries",
+      "priority": 1,
+      "steps": [
+        "Attempt INSERT query - verify blocked",
+        "Attempt UPDATE query - verify blocked",
+        "Attempt DELETE query - verify blocked",
+        "Attempt DROP query - verify blocked",
+        "Attempt TRUNCATE query - verify blocked",
+        "Attempt ALTER query - verify blocked",
+        "Attempt CREATE query - verify blocked",
+        "Attempt EXEC with mutation procedures - verify blocked"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F025",
+      "category": "query-operations",
+      "description": "Query timeout enforcement",
+      "priority": 2,
+      "steps": [
+        "Execute long-running query",
+        "Verify query is cancelled after timeout",
+        "Verify meaningful timeout error is returned"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F026",
+      "category": "query-operations",
+      "description": "Get sample data from table",
+      "priority": 2,
+      "steps": [
+        "Call get_sample_data tool with table name",
+        "Verify returns configurable number of rows",
+        "Verify can optionally randomize sample",
+        "Verify respects row limit"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F027",
+      "category": "search-operations",
+      "description": "Search for objects by name across all databases",
+      "priority": 2,
+      "steps": [
+        "Call search_objects tool with name pattern",
+        "Verify searches tables, views, procedures, functions",
+        "Verify returns object type for each match",
+        "Verify returns database and schema for each match"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F028",
+      "category": "search-operations",
+      "description": "Search within object definitions",
+      "priority": 3,
+      "steps": [
+        "Call search_definitions tool with text pattern",
+        "Verify searches procedure and function bodies",
+        "Verify searches view definitions",
+        "Verify returns matching line/context"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F029",
+      "category": "schema-operations",
+      "description": "List all schemas in a database",
+      "priority": 3,
+      "steps": [
+        "Call list_schemas tool",
+        "Verify returns schema names",
+        "Verify returns object counts per schema"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F030",
+      "category": "schema-operations",
+      "description": "Get database schema overview",
+      "priority": 2,
+      "steps": [
+        "Call get_schema_overview tool",
+        "Verify returns table count, view count, procedure count",
+        "Verify returns approximate database size",
+        "Verify returns last backup information if available"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F031",
+      "category": "security",
+      "description": "Connection string credentials not exposed in responses",
+      "priority": 1,
+      "steps": [
+        "Make various tool calls",
+        "Verify no response contains password",
+        "Verify error messages don't expose credentials"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F032",
+      "category": "security",
+      "description": "SQL injection prevention",
+      "priority": 1,
+      "steps": [
+        "Attempt SQL injection in table name parameter",
+        "Attempt SQL injection in database name parameter",
+        "Verify all inputs are properly parameterized or escaped",
+        "Verify dynamic SQL uses safe patterns"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F033",
+      "category": "security",
+      "description": "Read-only connection enforcement",
+      "priority": 1,
+      "steps": [
+        "Verify connection uses read-only application intent where supported",
+        "Verify transactions are read-only",
+        "Verify no DDL can be executed even if query filter bypassed"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F034",
+      "category": "configuration",
+      "description": "Environment variable configuration",
+      "priority": 1,
+      "steps": [
+        "Set connection via MSSQL_CONNECTION_STRING",
+        "Alternatively set via individual vars (host, port, user, pass, db)",
+        "Verify missing required config gives clear error"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F035",
+      "category": "configuration",
+      "description": "Configurable result limits",
+      "priority": 2,
+      "steps": [
+        "Set MAX_ROWS environment variable",
+        "Verify queries respect the limit",
+        "Verify sensible default when not configured"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F036",
+      "category": "configuration",
+      "description": "Configurable query timeout",
+      "priority": 2,
+      "steps": [
+        "Set QUERY_TIMEOUT environment variable",
+        "Verify queries timeout appropriately",
+        "Verify sensible default when not configured"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F037",
+      "category": "configuration",
+      "description": "Database allowlist/blocklist",
+      "priority": 3,
+      "steps": [
+        "Configure ALLOWED_DATABASES to restrict access",
+        "Verify only allowed databases are accessible",
+        "Configure BLOCKED_DATABASES to exclude specific databases",
+        "Verify blocked databases are not accessible"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F038",
+      "category": "docker",
+      "description": "Docker image builds successfully",
+      "priority": 1,
+      "steps": [
+        "Run docker build command",
+        "Verify image builds without errors",
+        "Verify image size is reasonable"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F039",
+      "category": "docker",
+      "description": "Docker container runs and serves MCP",
+      "priority": 1,
+      "steps": [
+        "Run docker container with environment variables",
+        "Verify MCP server starts",
+        "Verify can communicate with server via stdio"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F040",
+      "category": "docker",
+      "description": "Docker Compose configuration for development",
+      "priority": 2,
+      "steps": [
+        "Run docker-compose up",
+        "Verify MCP server starts",
+        "Verify works with local SQL Server container for testing"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F041",
+      "category": "error-handling",
+      "description": "Invalid database name returns clear error",
+      "priority": 2,
+      "steps": [
+        "Call tool with non-existent database",
+        "Verify error message mentions database not found",
+        "Verify suggests available databases"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F042",
+      "category": "error-handling",
+      "description": "Invalid table name returns clear error",
+      "priority": 2,
+      "steps": [
+        "Call tool with non-existent table",
+        "Verify error message mentions table not found",
+        "Verify suggests similar table names if available"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F043",
+      "category": "error-handling",
+      "description": "Query syntax errors return helpful messages",
+      "priority": 2,
+      "steps": [
+        "Execute query with syntax error",
+        "Verify SQL Server error is passed through",
+        "Verify line/position information is included"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F044",
+      "category": "error-handling",
+      "description": "Permission errors are handled gracefully",
+      "priority": 2,
+      "steps": [
+        "Attempt to access object without permission",
+        "Verify clear permission denied message",
+        "Verify server continues to function"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F045",
+      "category": "documentation",
+      "description": "README with setup instructions",
+      "priority": 2,
+      "steps": [
+        "README exists",
+        "Contains installation instructions",
+        "Contains configuration reference",
+        "Contains usage examples"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F046",
+      "category": "documentation",
+      "description": "Tool documentation in MCP schema",
+      "priority": 2,
+      "steps": [
+        "Each tool has clear description",
+        "Each parameter has description and type",
+        "Examples are provided where helpful"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F047",
+      "category": "testing",
+      "description": "Unit tests for query validation",
+      "priority": 2,
+      "steps": [
+        "Tests exist for mutation blocking",
+        "Tests exist for SQL injection prevention",
+        "Tests can run without database connection"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F048",
+      "category": "testing",
+      "description": "Integration tests with test database",
+      "priority": 3,
+      "steps": [
+        "Integration tests exist",
+        "Tests use Docker SQL Server container",
+        "Tests cover all major tool operations"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F049",
+      "category": "performance",
+      "description": "Connection pooling",
+      "priority": 3,
+      "steps": [
+        "Verify connections are pooled/reused",
+        "Verify pool size is configurable",
+        "Verify connections are properly returned to pool"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F050",
+      "category": "performance",
+      "description": "Metadata caching",
+      "priority": 3,
+      "steps": [
+        "Verify database/table lists are cached",
+        "Verify cache TTL is configurable",
+        "Verify cache can be manually invalidated"
+      ],
+      "passes": false
+    }
+  ],
+  "priority_guide": {
+    "1": "Critical - Must have for MVP",
+    "2": "Important - Should have for usable product",
+    "3": "Nice to have - Can be added later"
+  }
+}
