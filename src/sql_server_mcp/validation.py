@@ -112,9 +112,15 @@ def detect_query_type(query: str) -> QueryType:
                 if qt != QueryType.UNKNOWN and after_cte.startswith(qt.value):
                     return qt
 
-    # Check each query type
-    for qt in QueryType:
-        if qt != QueryType.UNKNOWN and normalized.startswith(qt.value):
+    # Check each query type, sorted by length (longest first) to avoid
+    # partial matches (e.g., EXECUTE before EXEC)
+    sorted_types = sorted(
+        [qt for qt in QueryType if qt != QueryType.UNKNOWN],
+        key=lambda x: len(x.value),
+        reverse=True,
+    )
+    for qt in sorted_types:
+        if normalized.startswith(qt.value):
             return qt
 
     return QueryType.UNKNOWN
@@ -227,11 +233,17 @@ def quote_identifier(identifier: str) -> str:
     Returns:
         The quoted identifier (e.g., [table_name])
     """
-    # Remove existing brackets if present
-    identifier = identifier.strip("[]")
+    # Handle schema.table notation - split on dots that aren't inside brackets
+    # First check if already fully quoted (e.g., [dbo].[users])
+    if re.match(r"^\[[\w]+\](\.\[[\w]+\])*$", identifier):
+        return identifier
 
     # Handle schema.table notation
     parts = identifier.split(".")
-    quoted_parts = [f"[{part}]" for part in parts]
+    quoted_parts = []
+    for part in parts:
+        # Remove existing brackets if present
+        part = part.strip("[]")
+        quoted_parts.append(f"[{part}]")
 
     return ".".join(quoted_parts)

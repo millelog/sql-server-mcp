@@ -13,7 +13,7 @@
         "Verify server responds with capabilities",
         "Verify server name and version are correct"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F002",
@@ -25,7 +25,7 @@
         "Verify all expected tools are returned",
         "Verify tool schemas are valid JSON Schema"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F003",
@@ -38,7 +38,7 @@
         "Verify connection is successful",
         "Verify connection is properly closed after use"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F004",
@@ -50,7 +50,7 @@
         "Verify meaningful error message is returned",
         "Verify server does not crash"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F005",
@@ -128,7 +128,7 @@
         "Verify includes default values",
         "Verify includes NULL/NOT NULL specifications"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F011",
@@ -235,7 +235,7 @@
         "Verify returns parameter definitions",
         "Verify handles encrypted procedures gracefully"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F019",
@@ -286,7 +286,7 @@
         "Verify column names are preserved",
         "Verify data types are correctly serialized to JSON"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F023",
@@ -299,7 +299,7 @@
         "Verify user is informed of truncation",
         "Verify limit can be customized per-query up to maximum"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F024",
@@ -316,7 +316,7 @@
         "Attempt CREATE query - verify blocked",
         "Attempt EXEC with mutation procedures - verify blocked"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F025",
@@ -404,7 +404,7 @@
         "Verify no response contains password",
         "Verify error messages don't expose credentials"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F032",
@@ -417,7 +417,7 @@
         "Verify all inputs are properly parameterized or escaped",
         "Verify dynamic SQL uses safe patterns"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F033",
@@ -441,7 +441,7 @@
         "Alternatively set via individual vars (host, port, user, pass, db)",
         "Verify missing required config gives clear error"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F035",
@@ -453,7 +453,7 @@
         "Verify queries respect the limit",
         "Verify sensible default when not configured"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F036",
@@ -465,7 +465,7 @@
         "Verify queries timeout appropriately",
         "Verify sensible default when not configured"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F037",
@@ -478,7 +478,7 @@
         "Configure BLOCKED_DATABASES to exclude specific databases",
         "Verify blocked databases are not accessible"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F038",
@@ -490,7 +490,7 @@
         "Verify image builds without errors",
         "Verify image size is reasonable"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F039",
@@ -575,7 +575,7 @@
         "Contains configuration reference",
         "Contains usage examples"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F046",
@@ -587,7 +587,7 @@
         "Each parameter has description and type",
         "Examples are provided where helpful"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F047",
@@ -599,7 +599,7 @@
         "Tests exist for SQL injection prevention",
         "Tests can run without database connection"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F048",

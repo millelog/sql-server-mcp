@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source .venv/bin/activate)",
+      "Bash(pytest:*)",
+      "Bash(cat:*)",
+      "Bash(python3:*)",
+      "Bash(./init.sh)"
+    ]
+  }
+}

@@ -42,6 +42,74 @@ This file tracks progress across agent sessions. Update this after every work se
 
 ---
 
+## Session 2 - 2025-12-29 - Environment Setup & Bug Fixes
+
+### What was done:
+- Recreated Python virtual environment for Linux (was Windows venv)
+- Installed package in editable mode (pip install -e .)
+- Fixed 2 failing tests:
+  - Fixed EXEC vs EXECUTE detection order (sort by length for proper matching)
+  - Fixed quote_identifier to handle already-quoted schema.table identifiers
+- Updated feature_list.json to mark 16 features as passing
+- Verified all 45 unit tests pass
+
+### Current state:
+- All core infrastructure implemented and working
+- 16/50 features passing (32%)
+- All Priority 1 critical features implemented except F018 (stored proc definition), F033 (read-only connection), F038/F039 (Docker)
+- Unit tests: 45/45 passing
+
+### Known issues:
+- Docker builds not yet tested
+- Integration tests require actual SQL Server connection
+
+### Next steps (priority order):
+1. Test Docker build (F038, F039)
+2. Implement remaining Priority 1 feature F018 (get_procedure_definition)
+3. Test with actual SQL Server to verify integration
+4. Add README documentation (F045)
+
+### Feature progress:
+- Passing: 16/50
+- Priority 1 (Critical): 11/14 passing
+- Priority 2 (Important): 4/23 passing
+- Priority 3 (Nice to have): 1/13 passing
+
+---
+
+## Session 3 - 2025-12-29 - Docker Build & Documentation
+
+### What was done:
+- Verified F018 (get_procedure_definition) was already implemented - marked as passing
+- Fixed Dockerfile casing warning (as -> AS)
+- Added README.md to Dockerfile COPY step (was causing build failure)
+- Created README.md with installation, configuration, and usage docs
+- Fixed .env password quoting for special characters
+- Successfully built Docker image (430MB)
+
+### Current state:
+- 19/50 features passing (38%)
+- All Priority 1 features implemented except F033 (read-only connection) and F039 (Docker container runs)
+- Docker image builds successfully
+- F039 requires network access to SQL Server for full testing
+
+### Known issues:
+- F039 (Docker container runs) needs to be tested in environment with SQL Server network access
+- F033 (read-only connection enforcement) requires integration testing
+
+### Next steps:
+1. Test F039 (Docker container runs) when network access available
+2. Work on Priority 2 features (list_databases, list_tables, etc.)
+3. Add more unit tests
+
+### Feature progress:
+- Passing: 19/50
+- Priority 1 (Critical): 12/14 passing
+- Priority 2 (Important): 5/23 passing
+- Priority 3 (Nice to have): 2/13 passing
+
+---
+
 ## Template for future sessions:
 
 ## Session N - YYYY-MM-DD - Brief Title

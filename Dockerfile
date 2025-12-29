@@ -1,7 +1,7 @@
 # SQL Server MCP - Docker Image
 # Multi-stage build for smaller image size
 
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
-COPY pyproject.toml requirements.txt ./
+# Copy dependency files and README (needed for pyproject.toml)
+COPY pyproject.toml requirements.txt README.md ./
 
 # Create virtual environment and install dependencies
 RUN python -m venv /opt/venv
