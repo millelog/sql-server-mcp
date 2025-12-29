@@ -1,0 +1,20 @@
+# SQL Server MCP - Production Configuration
+#
+# Usage:
+#   docker-compose -f docker-compose.prod.yml up -d
+#
+# This connects to an external SQL Server (configured via .env)
+
+services:
+  mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sql-server-mcp:latest
+    container_name: sql-server-mcp
+    restart: unless-stopped
+    env_file:
+      - .env
+    # MCP uses stdio for communication
+    stdin_open: true
+    tty: true

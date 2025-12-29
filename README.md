@@ -49,15 +49,56 @@ Add to your Claude Desktop config:
 }
 ```
 
-## Docker
+## Docker Deployment
+
+### Quick Start (Server)
 
 ```bash
+# Clone the repo
+git clone https://github.com/YOUR_USERNAME/sql-server-mcp.git
+cd sql-server-mcp
+
+# Run setup (creates .env template)
+./setup.sh
+
+# Edit .env with your SQL Server credentials
+nano .env
+
+# Build and start
+./update.sh
+```
+
+### Updating
+
+Pull latest changes and restart the container:
+
+```bash
+./update.sh
+```
+
+This script will:
+1. Pull latest changes from git
+2. Rebuild the Docker image
+3. Stop the running container
+4. Start a new container with the updated image
+
+### Manual Docker Commands
+
+```bash
+# Build
 docker build -t sql-server-mcp .
-docker run --rm -it \
-  -e MSSQL_HOST=your-server \
-  -e MSSQL_USER=your-user \
-  -e MSSQL_PASSWORD=your-password \
-  sql-server-mcp
+
+# Run interactively
+docker run --rm -it --env-file .env sql-server-mcp
+
+# Run with docker-compose (production)
+docker-compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker logs -f sql-server-mcp
+
+# Stop
+docker-compose -f docker-compose.prod.yml down
 ```
 
 ## Available Tools
