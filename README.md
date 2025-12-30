@@ -59,6 +59,7 @@ Restart Claude Desktop after updating the config.
 | `MSSQL_USER` | Username | - |
 | `MSSQL_PASSWORD` | Password | - |
 | `MSSQL_DATABASE` | Default database | `master` |
+| `MSSQL_CONNECTION_STRING` | Full connection string (overrides above) | - |
 | `MAX_ROWS` | Maximum rows returned | `100` |
 | `QUERY_TIMEOUT` | Query timeout (seconds) | `30` |
 | `ALLOWED_DATABASES` | Comma-separated allowlist | - |
@@ -85,6 +86,7 @@ Restart Claude Desktop after updating the config.
 | `get_sample_data` | Get sample rows from a table |
 | `search_objects` | Search for objects by name |
 | `search_definitions` | Search within object definitions |
+| `get_schema_overview` | Get database schema summary (object counts, size) |
 
 ## Development
 
