@@ -62,6 +62,50 @@ async def list_databases(
     )
 
 
+async def list_schemas(
+    db: "Database",
+    database: str | None = None,
+) -> str:
+    """List all schemas in a database with object counts.
+
+    Args:
+        db: Database connection manager
+        database: Database name (uses default if not specified)
+
+    Returns:
+        JSON string with schema list and object counts
+    """
+    query = """
+    SELECT
+        s.name AS schema_name,
+        s.schema_id,
+        dp.name AS owner_name,
+        COUNT(CASE WHEN o.type = 'U' THEN 1 END) AS table_count,
+        COUNT(CASE WHEN o.type = 'V' THEN 1 END) AS view_count,
+        COUNT(CASE WHEN o.type = 'P' THEN 1 END) AS procedure_count,
+        COUNT(CASE WHEN o.type IN ('FN', 'IF', 'TF') THEN 1 END) AS function_count,
+        COUNT(o.object_id) AS total_objects
+    FROM sys.schemas s
+    INNER JOIN sys.database_principals dp ON s.principal_id = dp.principal_id
+    LEFT JOIN sys.objects o ON s.schema_id = o.schema_id AND o.is_ms_shipped = 0
+    WHERE s.name NOT IN ('sys', 'INFORMATION_SCHEMA', 'guest')
+    GROUP BY s.name, s.schema_id, dp.name
+    ORDER BY s.name
+    """
+
+    results = db.execute_query(query, database)
+
+    return json.dumps(
+        {
+            "database": database or db.settings.database,
+            "schemas": results,
+            "count": len(results),
+        },
+        indent=2,
+        default=str,
+    )
+
+
 async def get_schema_overview(
     db: "Database",
     database: str | None = None,

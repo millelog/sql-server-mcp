@@ -185,6 +185,24 @@ async def list_tools() -> list[Tool]:
             },
         ),
         Tool(
+            name="get_view_columns",
+            description="Get column information for a view",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "database": {
+                        "type": "string",
+                        "description": "Database name",
+                    },
+                    "view": {
+                        "type": "string",
+                        "description": "View name (can include schema)",
+                    },
+                },
+                "required": ["view"],
+            },
+        ),
+        Tool(
             name="list_procedures",
             description="List all stored procedures in a database",
             inputSchema={
@@ -384,6 +402,19 @@ async def list_tools() -> list[Tool]:
             },
         ),
         Tool(
+            name="list_schemas",
+            description="List all schemas in a database with object counts",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "database": {
+                        "type": "string",
+                        "description": "Database name",
+                    },
+                },
+            },
+        ),
+        Tool(
             name="get_schema_overview",
             description="Get an overview of a database schema (counts of objects, size info)",
             inputSchema={
@@ -432,6 +463,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
             "get_table_relationships": tables.get_table_relationships,
             "list_views": views.list_views,
             "get_view_definition": views.get_view_definition,
+            "get_view_columns": views.get_view_columns,
             "list_procedures": procedures.list_procedures,
             "get_procedure_definition": procedures.get_procedure_definition,
             "get_procedure_parameters": procedures.get_procedure_parameters,
@@ -441,6 +473,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
             "get_sample_data": queries.get_sample_data,
             "search_objects": search.search_objects,
             "search_definitions": search.search_definitions,
+            "list_schemas": databases.list_schemas,
             "get_schema_overview": databases.get_schema_overview,
         }
 

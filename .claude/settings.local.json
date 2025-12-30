@@ -19,7 +19,12 @@
       "mcp__sql-server__get_sample_data",
       "mcp__sql-server__get_procedure_parameters",
       "mcp__sql-server__get_schema_overview",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "mcp__sql-server__list_functions",
+      "mcp__sql-server__get_function_definition",
+      "mcp__sql-server__execute_query",
+      "mcp__sql-server__get_procedure_definition",
+      "Bash(pip install:*)"
     ]
   },
   "enabledMcpjsonServers": [

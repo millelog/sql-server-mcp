@@ -30,17 +30,86 @@ async def list_tables(
     schema: str | None = None,
     name_pattern: str | None = None,
 ) -> str:
-    """List all tables in a database.
+    """List all tables in a database, or across all databases if none specified.
 
     Args:
         db: Database connection manager
-        database: Database name
+        database: Database name. If not specified, lists tables from all accessible databases.
         schema: Filter by schema
         name_pattern: Filter by name pattern
 
     Returns:
         JSON string with table list
     """
+    # If database is specified, query only that database
+    if database:
+        return await _list_tables_single_db(db, database, schema, name_pattern)
+
+    # Otherwise, query all accessible databases
+    db_query = "SELECT name FROM sys.databases WHERE state = 0"
+    db_results = db.execute_query(db_query, database="master")
+    databases = [r["name"] for r in db_results if db.settings.is_database_allowed(r["name"])]
+
+    # Skip system databases
+    system_dbs = {"master", "model", "msdb", "tempdb"}
+    databases = [d for d in databases if d not in system_dbs]
+
+    all_tables = []
+    for db_name in databases:
+        try:
+            query = f"""
+            SELECT
+                '{db_name}' AS database_name,
+                s.name AS schema_name,
+                t.name AS table_name,
+                p.rows AS row_count,
+                CAST(SUM(a.total_pages) * 8.0 / 1024 AS DECIMAL(10,2)) AS size_mb,
+                t.create_date,
+                t.modify_date
+            FROM sys.tables t
+            INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
+            INNER JOIN sys.indexes i ON t.object_id = i.object_id
+            INNER JOIN sys.partitions p ON i.object_id = p.object_id AND i.index_id = p.index_id
+            INNER JOIN sys.allocation_units a ON p.partition_id = a.container_id
+            WHERE t.type = 'U'
+            """
+
+            if schema:
+                sanitize_identifier(schema)
+                query += f" AND s.name = '{schema}'"
+
+            if name_pattern:
+                query += f" AND t.name LIKE '{name_pattern}'"
+
+            query += """
+            GROUP BY s.name, t.name, p.rows, t.create_date, t.modify_date
+            ORDER BY s.name, t.name
+            """
+
+            results = db.execute_query(query, db_name)
+            all_tables.extend(results)
+        except Exception:
+            # Skip databases we can't access
+            continue
+
+    return json.dumps(
+        {
+            "tables": all_tables,
+            "count": len(all_tables),
+            "databases_searched": len(databases),
+        },
+        indent=2,
+        default=str,
+    )
+
+
+async def _list_tables_single_db(
+    db: "Database",
+    database: str,
+    schema: str | None = None,
+    name_pattern: str | None = None,
+) -> str:
+    """List tables in a single database."""
     query = """
     SELECT
         s.name AS schema_name,
@@ -128,6 +197,9 @@ async def get_table_definition(
     """
 
     columns = db.execute_query(columns_query, database)
+
+    if not columns:
+        return f"-- Table '{table}' not found or has no columns"
 
     # Get primary key
     pk_query = f"""
@@ -245,6 +317,29 @@ async def get_table_columns(
     """
 
     results = db.execute_query(query, database)
+
+    if not results:
+        # Table not found - try to suggest similar tables
+        similar_query = f"""
+        SELECT TOP 5 s.name + '.' + t.name AS table_name
+        FROM sys.tables t
+        INNER JOIN sys.schemas s ON t.schema_id = s.schema_id
+        WHERE t.name LIKE '%{table_name[:3]}%'
+        ORDER BY t.name
+        """
+        try:
+            similar = db.execute_query(similar_query, database)
+            suggestions = [r["table_name"] for r in similar]
+            suggestion_text = f" Similar tables: {', '.join(suggestions)}" if suggestions else ""
+            return json.dumps(
+                {"error": f"Table '{table}' not found.{suggestion_text}"},
+                indent=2,
+            )
+        except Exception:
+            return json.dumps(
+                {"error": f"Table '{table}' not found."},
+                indent=2,
+            )
 
     return json.dumps(
         {

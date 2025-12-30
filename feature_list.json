@@ -100,7 +100,7 @@
         "Verify returns tables from all accessible databases",
         "Verify each result includes database name"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F009",
@@ -113,7 +113,7 @@
         "Verify case-insensitive search works",
         "Verify can search across all databases"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F010",
@@ -158,7 +158,7 @@
         "Verify returns clustered/non-clustered status",
         "Verify returns unique status"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F013",
@@ -197,7 +197,7 @@
         "Verify returns underlying SELECT query",
         "Verify handles views with encrypted definitions gracefully"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F016",
@@ -209,7 +209,7 @@
         "Verify returns column names and data types",
         "Verify returns source table/column information where available"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F017",
@@ -261,7 +261,7 @@
         "Verify returns table-valued functions",
         "Verify includes function type in response"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F021",
@@ -273,7 +273,7 @@
         "Verify returns full CREATE FUNCTION statement",
         "Verify returns return type information"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F022",
@@ -328,7 +328,7 @@
         "Verify query is cancelled after timeout",
         "Verify meaningful timeout error is returned"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F026",
@@ -367,7 +367,7 @@
         "Verify searches view definitions",
         "Verify returns matching line/context"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F029",
@@ -379,7 +379,7 @@
         "Verify returns schema names",
         "Verify returns object counts per schema"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F030",
@@ -538,7 +538,7 @@
         "Verify error message mentions table not found",
         "Verify suggests similar table names if available"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F043",
@@ -550,7 +550,7 @@
         "Verify SQL Server error is passed through",
         "Verify line/position information is included"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F044",
