@@ -63,7 +63,7 @@
         "Verify system databases can be optionally excluded",
         "Verify response includes database metadata (size, state)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F006",
@@ -75,7 +75,7 @@
         "Verify only matching databases are returned",
         "Verify wildcard patterns work"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F007",
@@ -88,7 +88,7 @@
         "Verify includes schema names (e.g., dbo.TableName)",
         "Verify response includes row count estimates"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F008",
@@ -143,7 +143,7 @@
         "Verify returns identity column info",
         "Verify returns computed column formulas"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F012",
@@ -172,7 +172,7 @@
         "Verify returns ON DELETE/UPDATE actions",
         "Verify returns both incoming and outgoing relationships"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F014",
@@ -184,7 +184,7 @@
         "Verify returns array of view names with schemas",
         "Verify can filter by name pattern"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F015",
@@ -222,7 +222,7 @@
         "Verify can filter by name pattern",
         "Verify excludes system procedures by default"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F018",
@@ -248,7 +248,7 @@
         "Verify returns direction (IN/OUT/INOUT)",
         "Verify returns default values"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F020",
@@ -341,7 +341,7 @@
         "Verify can optionally randomize sample",
         "Verify respects row limit"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F027",
@@ -354,7 +354,7 @@
         "Verify returns object type for each match",
         "Verify returns database and schema for each match"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F028",
@@ -392,7 +392,7 @@
         "Verify returns approximate database size",
         "Verify returns last backup information if available"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F031",

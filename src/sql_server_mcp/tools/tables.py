@@ -277,14 +277,17 @@ async def get_table_indexes(
     if schema:
         sanitize_identifier(schema)
 
+    # Query indexes with column details - we'll aggregate in Python for compatibility
     query = f"""
     SELECT
         i.name AS index_name,
         i.type_desc AS index_type,
         i.is_unique,
         i.is_primary_key,
-        STRING_AGG(c.name, ', ') WITHIN GROUP (ORDER BY ic.key_ordinal) AS columns,
-        STRING_AGG(CASE WHEN ic.is_included_column = 1 THEN c.name END, ', ') AS included_columns
+        c.name AS column_name,
+        ic.key_ordinal,
+        ic.is_included_column,
+        ic.is_descending_key
     FROM sys.indexes i
     INNER JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
     INNER JOIN sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id
@@ -293,11 +296,35 @@ async def get_table_indexes(
     WHERE t.name = '{table_name}'
     {"AND s.name = '" + schema + "'" if schema else ""}
     AND i.name IS NOT NULL
-    GROUP BY i.name, i.type_desc, i.is_unique, i.is_primary_key
-    ORDER BY i.is_primary_key DESC, i.name
+    ORDER BY i.is_primary_key DESC, i.name, ic.key_ordinal
     """
 
-    results = db.execute_query(query, database)
+    raw_results = db.execute_query(query, database)
+
+    # Aggregate columns by index in Python
+    indexes = {}
+    for row in raw_results:
+        idx_name = row["index_name"]
+        if idx_name not in indexes:
+            indexes[idx_name] = {
+                "index_name": idx_name,
+                "index_type": row["index_type"],
+                "is_unique": row["is_unique"],
+                "is_primary_key": row["is_primary_key"],
+                "columns": [],
+                "included_columns": [],
+            }
+        if row["is_included_column"]:
+            indexes[idx_name]["included_columns"].append(row["column_name"])
+        else:
+            indexes[idx_name]["columns"].append(row["column_name"])
+
+    # Convert columns lists to comma-separated strings
+    results = []
+    for idx in indexes.values():
+        idx["columns"] = ", ".join(idx["columns"])
+        idx["included_columns"] = ", ".join(idx["included_columns"]) if idx["included_columns"] else None
+        results.append(idx)
 
     return json.dumps(
         {

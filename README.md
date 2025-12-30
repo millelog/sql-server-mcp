@@ -1,6 +1,6 @@
 # SQL Server MCP
 
-A read-only MCP (Model Context Protocol) server for SQL Server database introspection.
+A read-only MCP (Model Context Protocol) server for SQL Server database introspection. Use with Claude Desktop to let Claude explore and query your SQL Server databases.
 
 ## Features
 
@@ -13,12 +13,44 @@ A read-only MCP (Model Context Protocol) server for SQL Server database introspe
 ## Installation
 
 ```bash
-pip install sql-server-mcp
+# Clone the repo
+git clone https://github.com/YOUR_USERNAME/sql-server-mcp.git
+cd sql-server-mcp
+
+# Install in a virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -e .
 ```
 
-## Configuration
+## Claude Desktop Configuration
 
-Set environment variables:
+Add to your Claude Desktop config file:
+
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "sql-server": {
+      "command": "python",
+      "args": ["-m", "sql_server_mcp"],
+      "cwd": "C:\\path\\to\\sql-server-mcp",
+      "env": {
+        "MSSQL_HOST": "your-server",
+        "MSSQL_USER": "your-username",
+        "MSSQL_PASSWORD": "your-password",
+        "MSSQL_DATABASE": "master"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop after updating the config.
+
+## Configuration Options
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -29,89 +61,40 @@ Set environment variables:
 | `MSSQL_DATABASE` | Default database | `master` |
 | `MAX_ROWS` | Maximum rows returned | `100` |
 | `QUERY_TIMEOUT` | Query timeout (seconds) | `30` |
-
-## Usage with Claude Desktop
-
-Add to your Claude Desktop config:
-
-```json
-{
-  "mcpServers": {
-    "sql-server": {
-      "command": "sql-server-mcp",
-      "env": {
-        "MSSQL_HOST": "your-server",
-        "MSSQL_USER": "your-user",
-        "MSSQL_PASSWORD": "your-password"
-      }
-    }
-  }
-}
-```
-
-## Docker Deployment
-
-### Quick Start (Server)
-
-```bash
-# Clone the repo
-git clone https://github.com/YOUR_USERNAME/sql-server-mcp.git
-cd sql-server-mcp
-
-# Run setup (creates .env template)
-./setup.sh
-
-# Edit .env with your SQL Server credentials
-nano .env
-
-# Build and start
-./update.sh
-```
-
-### Updating
-
-Pull latest changes and restart the container:
-
-```bash
-./update.sh
-```
-
-This script will:
-1. Pull latest changes from git
-2. Rebuild the Docker image
-3. Stop the running container
-4. Start a new container with the updated image
-
-### Manual Docker Commands
-
-```bash
-# Build
-docker build -t sql-server-mcp .
-
-# Run interactively
-docker run --rm -it --env-file .env sql-server-mcp
-
-# Run with docker-compose (production)
-docker-compose -f docker-compose.prod.yml up -d
-
-# View logs
-docker logs -f sql-server-mcp
-
-# Stop
-docker-compose -f docker-compose.prod.yml down
-```
+| `ALLOWED_DATABASES` | Comma-separated allowlist | - |
+| `BLOCKED_DATABASES` | Comma-separated blocklist | - |
 
 ## Available Tools
 
-- `list_databases` - List all accessible databases
-- `list_tables` - List tables in a database
-- `get_table_definition` - Get CREATE TABLE DDL
-- `list_views` - List views in a database
-- `get_view_definition` - Get CREATE VIEW DDL
-- `list_procedures` - List stored procedures
-- `get_procedure_definition` - Get CREATE PROCEDURE DDL
-- `execute_query` - Run read-only SELECT queries
-- `search_objects` - Search for objects by name
+| Tool | Description |
+|------|-------------|
+| `list_databases` | List all accessible databases |
+| `list_tables` | List tables in a database |
+| `get_table_definition` | Get CREATE TABLE DDL |
+| `get_table_columns` | Get column metadata |
+| `get_table_indexes` | Get index information |
+| `get_table_relationships` | Get foreign key relationships |
+| `list_views` | List views in a database |
+| `get_view_definition` | Get CREATE VIEW DDL |
+| `list_procedures` | List stored procedures |
+| `get_procedure_definition` | Get CREATE PROCEDURE DDL |
+| `get_procedure_parameters` | Get procedure parameters |
+| `list_functions` | List user-defined functions |
+| `get_function_definition` | Get CREATE FUNCTION DDL |
+| `execute_query` | Run read-only SELECT queries |
+| `get_sample_data` | Get sample rows from a table |
+| `search_objects` | Search for objects by name |
+| `search_definitions` | Search within object definitions |
+
+## Development
+
+```bash
+# Run tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=src/sql_server_mcp
+```
 
 ## License
 

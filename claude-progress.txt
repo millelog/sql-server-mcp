@@ -110,6 +110,49 @@ This file tracks progress across agent sessions. Update this after every work se
 
 ---
 
+## Session 4 - 2025-12-29 - Feature Verification & Bug Fix
+
+### What was done:
+- Verified 11 additional features work correctly via live MCP testing:
+  - F005: list_databases (with include_system and name_pattern)
+  - F006: filter databases by name pattern
+  - F007: list_tables (with row counts and metadata)
+  - F011: get_table_columns (with detailed metadata)
+  - F013: get_table_relationships (outgoing/incoming FKs)
+  - F014: list_views
+  - F017: list_procedures
+  - F019: get_procedure_parameters
+  - F026: get_sample_data
+  - F027: search_objects
+  - F030: get_schema_overview
+- Fixed bug in get_table_indexes (F012): STRING_AGG syntax issue
+  - Changed to use Python-side aggregation for compatibility
+  - Fix is in local code, needs MCP server restart to take effect
+
+### Current state:
+- 30/50 features passing (60%, up from 38%)
+- All 45 unit tests pass
+- F012 fix is ready but needs MCP restart to verify
+
+### Known issues:
+- F012 (get_table_indexes): Code fixed locally, MCP needs restart
+- F015 (get_view_definition): Returns "Unable to retrieve" - may be permission issue
+- F039 (Docker container runs): Needs network access to SQL Server
+
+### Next steps:
+1. Restart MCP server to verify F012 fix
+2. Investigate F015 view definition retrieval issue
+3. Test remaining Priority 2 features (F009, F015, F025)
+4. Work on Priority 3 features
+
+### Feature progress:
+- Passing: 30/50
+- Priority 1 (Critical): 12/14 passing
+- Priority 2 (Important): 15/23 passing
+- Priority 3 (Nice to have): 3/13 passing
+
+---
+
 ## Template for future sessions:
 
 ## Session N - YYYY-MM-DD - Brief Title

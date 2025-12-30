@@ -5,7 +5,24 @@
       "Bash(pytest:*)",
       "Bash(cat:*)",
       "Bash(python3:*)",
-      "Bash(./init.sh)"
+      "Bash(./init.sh)",
+      "mcp__sql-server__search_objects",
+      "mcp__sql-server__search_definitions",
+      "mcp__sql-server__list_tables",
+      "mcp__sql-server__list_databases",
+      "mcp__sql-server__get_table_columns",
+      "mcp__sql-server__get_table_indexes",
+      "mcp__sql-server__get_table_relationships",
+      "mcp__sql-server__list_views",
+      "mcp__sql-server__get_view_definition",
+      "mcp__sql-server__list_procedures",
+      "mcp__sql-server__get_sample_data",
+      "mcp__sql-server__get_procedure_parameters",
+      "mcp__sql-server__get_schema_overview",
+      "Bash(python:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "sql-server"
+  ]
 }
